@@ -30,8 +30,14 @@ def go(args):
 
     df = pd.read_csv(artifact_path)
 
+    df = df.drop_duplicates()
     df = df.dropna(subset=["price"])
     df = df[(df.price >= args.min_price) & (df.price <= args.max_price)]
+
+    idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
+    df = df[idx].copy()
+
+    logger.info("Cleaned data has %s rows and %s columns", *df.shape)
 
     df.to_csv("clean_sample.csv", index=False)
 
